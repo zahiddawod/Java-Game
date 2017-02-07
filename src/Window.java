@@ -14,22 +14,20 @@ import java.awt.*;
 public class Window extends Application {
     public static final double WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
     public static final double HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-    public static ImageButton button[] = new ImageButton[4];
-    public static String buttonImage[][] = new String[4][3];
+    public static final int numOfButtons = 4;
+    public static ImageButton button[] = new ImageButton[numOfButtons];
+    public static String buttonImage[][] = new String[numOfButtons][3];
 
     public void createMainMenuButtons() {
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < numOfButtons; i++) {
             for (int j = 0; j < 3; j++) {
                 buttonImage[i][j] = "assets/lib/img/buttons/" + (i + 1) + "-" + (j + 1) + ".png";
             }
         }
 
         String musicButton[] = {"assets/lib/img/buttons/music.jpg", "assets/lib/img/buttons/nomusic.jpg"};
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < numOfButtons; i++) {
             button[i] = new ImageButton(buttonImage[i][0], buttonImage[i][2]);
-            for (int j = 0; j < 1; j++) {
-                buttonImage[i][j] = "assets/lib/img/buttons/" + (i + 1) + "-" + (j + 1) + ".png";
-            }
             button[i].setPrefSize(277, 50);
             button[i].relocate((WIDTH / 2) - (277 / 2), (HEIGHT / 3) + (90 * (i + 1)));
         }
@@ -64,7 +62,7 @@ public class Window extends Application {
 
         Audio music_mainMenu = new Audio("assets/lib/audio/music/Main.wav");
         primaryStage.show();
-        music_mainMenu.play();
+        //music_mainMenu.play();
     }
 
     //public void init() { }
