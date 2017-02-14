@@ -37,8 +37,8 @@ public class Character extends Skills {
         this.stamina = 10;
         this.gender = 'M';
 
-        this.velocityX = 2.2;
-        this.velocityY = 2.2;
+        this.velocityX = 0;
+        this.velocityY = 0;
 
         this.sprite = new ImageView(new Image(Assets.maleSprite));
         this.sprite.relocate(x, y);
