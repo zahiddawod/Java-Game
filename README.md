@@ -1,6 +1,5 @@
 # Java Game
 
-How To Run:
-To test the program import project with any Java IDE (preferably Intellij IDEA) and open
-Window.class file from src folder within your IDE then run it.
+To test the program, download the repository and import the project with any Java IDE (preferably Intellij IDEA)
+Open Window.class file from src folder within your IDE then run it.
 
