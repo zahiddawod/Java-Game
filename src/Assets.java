@@ -4,6 +4,10 @@ public abstract class Assets {
     public static final ImageView background = new ImageView(new Image("assets/backgroundImage.jpg"));
     public static final String cursor = "assets/img/cursor.png";
     public static final String mainMenuMusic = "assets/audio/music/main/";
+    public static final String hoverAudio = "assets/audio/sfx/hover.wav";
+    public static final String hoverAudio2 = "assets/audio/sfx/hover3.wav";
+    public static final String mouseclickAudio = "assets/audio/sfx/mouseclick.wav";
+    public static final String mousereleaseAudio = "assets/audio/sfx/mouserelease.wav";
 
     public static final String musicOn = "assets/img/GUI/buttons/music.jpg";
     public static final String musicOff = "assets/img/GUI/buttons/nomusic.jpg";
@@ -22,4 +26,6 @@ public abstract class Assets {
 
     public static final String maleSprite = "assets/img/sprites/male.png";
     public static final double maleWidth = 35, maleHeight = 50;
+
+    //public static final Image grass = new Image("assets/world/sprites/grass.jpg");
 }

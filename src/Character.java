@@ -1,6 +1,6 @@
 import javafx.geometry.Rectangle2D;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 public class Character extends Skills {
     private String name;
@@ -11,7 +11,7 @@ public class Character extends Skills {
     private float xp;
     private char gender;
 
-    private ImageView sprite;
+    private Image sprite;
     private double width;
     private double height;
 
@@ -22,7 +22,7 @@ public class Character extends Skills {
     public int getLevel() { return this.level; }
     public float getXp() { return this.xp; }
     public char getGender() { return this.gender; }
-    public ImageView getSprite() { return sprite; }
+    public Image getSprite() { return sprite; }
 
     public void setName(String name) { this.name = name; }
     public void setGender(char gender) { this.gender = gender; }
@@ -40,23 +40,19 @@ public class Character extends Skills {
         this.velocityX = 0;
         this.velocityY = 0;
 
-        this.sprite = new ImageView(new Image(Assets.maleSprite));
-        this.sprite.relocate(x, y);
-
-        width = Assets.maleWidth;
-        height = Assets.maleHeight;
+        this.sprite = new Image(Assets.maleSprite);
+        this.width = Assets.maleWidth;
+        this.height = Assets.maleHeight;
     }
 
     public void update() {
-        x += velocityX;
-        y += velocityY;
+        this.x += this.velocityX;
+        this.y += this.velocityY;
     }
 
-    public void render() {
-        this.sprite.relocate(x, y);
-    }
+    public void render(GraphicsContext gc) { gc.drawImage(this.sprite, this.x, this.y); }
 
     public Rectangle2D getBoundry() {
-        return new Rectangle2D(x, y, width, height);
+        return new Rectangle2D(this.x, this.y, this.width, this.height);
     }
 }

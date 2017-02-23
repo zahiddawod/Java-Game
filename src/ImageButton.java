@@ -48,6 +48,7 @@ public class ImageButton extends Button {
         setOnMouseEntered(new EventHandler<MouseEvent>() {
             public void handle(MouseEvent mouseEvent) {
                 setGraphic(new ImageView(new Image(getClass().getResourceAsStream(hover))));
+                new Audio(Assets.hoverAudio2).play();
             }
         });
 
