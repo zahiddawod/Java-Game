@@ -2,6 +2,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 
 public abstract class State {
+    protected Handler handler;
     protected static Pane mainPane = new Pane();
     protected static Scene scene = new Scene (mainPane, Window.WIDTH, Window.HEIGHT);
 

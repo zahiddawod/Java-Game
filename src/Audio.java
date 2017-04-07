@@ -10,7 +10,16 @@ public class Audio {
         try {
             AudioInputStream ais = AudioSystem.getAudioInputStream(getClass().getResourceAsStream(file));
             AudioFormat baseFormat = ais.getFormat();
-            AudioFormat decodeFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, baseFormat.getSampleRate(), 16, baseFormat.getChannels(), baseFormat.getChannels() * 2, baseFormat.getSampleRate(), false);
+
+            AudioFormat decodeFormat = new AudioFormat(
+                    AudioFormat.Encoding.PCM_SIGNED,
+                    baseFormat.getSampleRate(),
+                    16,
+                    baseFormat.getChannels(),
+                    baseFormat.getChannels() * 2,
+                    baseFormat.getSampleRate(),
+                    false);
+
             AudioInputStream dais = AudioSystem.getAudioInputStream(decodeFormat, ais);
             clip = AudioSystem.getClip();
             clip.open(dais);
@@ -34,9 +43,8 @@ public class Audio {
         }
     }
 
-    public void close() {
+    public void pause() {
         stop();
         clip.close();
-        playing = false;
     }
 }

@@ -1,8 +1,8 @@
 import javafx.scene.image.*;
 
 public abstract class Assets {
-    public static final ImageView background = new ImageView(new Image("assets/backgroundImage.jpg"));
-    public static final String cursor = "assets/img/cursor.png";
+    public static final ImageView background = new ImageView(new Image("assets/background.jpg"));
+    public static final String cursor = "assets/img/cursor2.png";
     public static final String mainMenuMusic = "assets/audio/music/main/";
     public static final String hoverAudio = "assets/audio/sfx/hover.wav";
     public static final String hoverAudio2 = "assets/audio/sfx/hover3.wav";
@@ -24,8 +24,10 @@ public abstract class Assets {
     public static final String buttonRightHover = "assets/img/GUI/buttons/b-right-hover.png";
     public static final double backButtonWidth = 30, backButtonHeight = 30;
 
-    public static final String maleSprite = "assets/img/sprites/male.png";
-    public static final double maleWidth = 35, maleHeight = 50;
+    public static final Image male_SpriteSheet = new Image("assets/img/sprites/male.png");
+    public static final PixelReader maleReader = male_SpriteSheet.getPixelReader();
+    public static final byte maleWidth = 35, maleHeight = 50;
 
-    //public static final Image grass = new Image("assets/world/sprites/grass.jpg");
+    public static final Image world_SpriteSheet = new Image("assets/worlds/temp_WorldSpriteSheet.png");
+    public static final PixelReader reader = world_SpriteSheet.getPixelReader();
 }

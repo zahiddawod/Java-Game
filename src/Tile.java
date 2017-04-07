@@ -1,26 +1,31 @@
+import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 
 public class Tile {
-    public static Tile[] tiles = new Tile[256];
-    public static final int tilewidth = 64, tileheight = 64;
+    private byte tilewidth = 32, tileheight = 32;
 
-    protected Image texture;
-    protected final int id;
-    protected boolean walkable;
+    private WritableImage texture;
+    private boolean walkable;
+    private int x, y;
 
+    public WritableImage getTexture() { return texture; }
     public boolean isWalkable() { return walkable; }
+    public byte getTilewidth() { return tilewidth; }
+    public byte getTileheight() { return tileheight; }
+    public int getX() { return x; }
+    public int getY() { return y; }
 
-    public Tile(Image texture, int id, boolean walkable) {
-        this.texture = texture;
-        this.id = id;
+    public Tile(boolean walkable, int xOfSpriteSheet, int yOfSpriteSheet) {
+        this.texture = new WritableImage(Assets.reader, xOfSpriteSheet, yOfSpriteSheet, tilewidth, tileheight);
         this.walkable = walkable;
     }
 
-    public void update() {
-        //tiles[0] = new Tile(Assets.grass, 0, true);
+    public void update(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
-    public void render(GraphicsContext gc, int x, int y) {
-        gc.drawImage(texture, x, y, tilewidth, tileheight);
-    }
+    public void render(GraphicsContext gc, int x, int y) { gc.drawImage(this.texture, x, y, this.tilewidth, this.tileheight); }
+
+    public Rectangle2D getBoundary() { return new Rectangle2D(this.x, this.y, tilewidth, tileheight); }
 }

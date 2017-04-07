@@ -22,9 +22,20 @@ public class MenuState extends State {
     public static ImageButton buttonLeft, buttonRight;
     public static ImageView characterCreationUI;
 
-    private Audio music_mainMenu = new Audio(Assets.mainMenuMusic + /*(new Random().nextInt(3) + 1)*/2 + ".wav");
+    public static Audio music_mainMenu = new Audio(Assets.mainMenuMusic + (new Random().nextInt(3) + 1) + ".wav");
+
+    public MenuState() {
+        music_mainMenu.play();
+        handler = new Handler(this);
+    }
 
     public void createMainMenuUI() {
+        // GUI
+        characterCreationUI = new ImageView(new Image("assets/img/GUI/charactercreation.png"));
+        characterCreationUI.setFitWidth(0.75 * Window.WIDTH);
+        characterCreationUI.setFitHeight(0.75 * Window.HEIGHT);
+        characterCreationUI.relocate(Window.WIDTH + (0.125 * Window.WIDTH), 0.1 * Window.HEIGHT);
+
         // BUTTONS
         buttonLeft = new ImageButton(Assets.buttonLeftNormal, Assets.buttonLeftHover);
         buttonRight = new ImageButton(Assets.buttonRightNormal, Assets.buttonRightHover);
@@ -46,6 +57,10 @@ public class MenuState extends State {
         }
         button[4].relocate((Window.WIDTH / 2) - (Assets.menuButtonsWidth / 2), Window.HEIGHT + Assets.menuButtonsHeight);
 
+        buttonLeft.setVisible(false);
+        button[4].setVisible(false);
+        buttonRight.setVisible(false);
+
         // Checks how many saves there are; if none then disables load button
         try {
             BufferedReader in = new BufferedReader(new FileReader(Assets.numOfGameSaves));
@@ -59,14 +74,8 @@ public class MenuState extends State {
             System.out.println("Error: Cannot read from file.");
         }
 
-        // GUI
-        characterCreationUI = new ImageView(new Image("assets/img/GUI/charactercreation.png"));
-        characterCreationUI.setFitWidth(0.75 * Window.WIDTH);
-        characterCreationUI.setFitHeight(0.75 * Window.HEIGHT);
-        characterCreationUI.relocate(Window.WIDTH + (0.125 * Window.WIDTH), 0.1 * Window.HEIGHT);
-
-        mainPane.getChildren().addAll(button);
         mainPane.getChildren().addAll(musicButton, buttonLeft, buttonRight, characterCreationUI);
+        mainPane.getChildren().addAll(button);
     }
 
     public void setButtonHandlers() {
@@ -101,18 +110,14 @@ public class MenuState extends State {
         buttonRight.setOnMouseClicked(new EventHandler<MouseEvent>() {
             public void handle(MouseEvent mouseEvent) { transitionButtons("back"); }
         });
-
     }
 
     public void newGame() {
         transitionButtons("left");
-        buttonLeft.setVisible(true);
-        button[4].setVisible(true);
     }
     public void loadGame() {}
     public void gameOptions() {
         transitionButtons("right");
-        buttonRight.setVisible(true);
     }
     public void exitGame() { Platform.exit(); }
     public void startGame() {
@@ -132,17 +137,20 @@ public class MenuState extends State {
     }
 
     public static void transitionButtons(String direction) {
-        buttonLeft.setVisible(false);
-        button[4].setVisible(false);
-        buttonRight.setVisible(false);
         double transitionButtonsTo = ((Window.WIDTH / 2) - (Assets.menuButtonsWidth / 2));
         double transitionOtherButtonTo = Window.HEIGHT, transitionCCUIto = Window.WIDTH + (0.125 * Window.WIDTH);
 
-        if (direction == "left") {
+        if (direction.equals("left")) {
+            buttonLeft.setVisible(true);
+            button[4].setVisible(true);
+            buttonRight.setVisible(false);
             transitionButtonsTo = -transitionButtonsTo;
             transitionCCUIto -= Window.WIDTH;
             transitionOtherButtonTo = (int) (Window.HEIGHT - 120);
-        } else if (direction == "right") {
+        } else if (direction.equals("right")) {
+            buttonLeft.setVisible(false);
+            button[4].setVisible(false);
+            buttonRight.setVisible(true);
             transitionButtonsTo = (int) (Window.WIDTH + transitionButtonsTo);
             transitionOtherButtonTo = (int) (Window.HEIGHT - 120);
         }
@@ -171,13 +179,11 @@ public class MenuState extends State {
     public void update() {
         createMainMenuUI();
         setButtonHandlers();
-
-        //music_mainMenu.play();
     }
 
     @Override
     public void render() {
         for (int i = 0; i < 4; i++)
-            button[i].fadeIn(1800);
+            button[i].fadeIn(1300);
     }
 }

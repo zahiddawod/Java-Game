@@ -1,66 +1,116 @@
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-
 import java.util.ArrayList;
 
-public class World extends GameObject {
-    //private static final int MAX_X = 5760, MAX_Y = 5760;
-    //private static final int MIN_X = -5760, MIN_Y = -5760;
+public class World {
+    private static final byte MAXTILEWIDTH = 32, MAXTILEHEIGHT = 32;
+    public static ArrayList<Tile> tiles = new ArrayList<Tile>();
 
-    private int xOffset = 0, yOffset = 0;
+    private Handler handler;
+    private EntityManager entityManager;
 
-    private int height[];
-    private Image[][] tile;
+    private int xOffset, yOffset;
+
+    private short width, height;
+    private Tile[][] mapTiles;
 
     public int getxOffset() { return this.xOffset; }
     public int getyOffset() { return this.yOffset; }
+    public EntityManager getEntityManager() { return entityManager; }
 
-    public World(String path) { loadWorld(path); }
+    public World(Handler handler, String path, int spawnX, int spawnY) {
+        this.handler = handler;
+        entityManager = new EntityManager(handler);
 
-    private void loadWorld(String path) {
-        String[][] file = Utils.loadFile(path);
+        initializeTiles(); // Loads all tiles
+        initializeWorldObjects(); // Loads main world's objects
+        loadWorld(path, spawnX, spawnY); // Loads main world
+    }
 
-        /*for (int i = 0; i < file.length; i++)
-            System.out.println("height: " + (i + 1) + " width: " + file[i].length);*/
+    public void initializeTiles() {
+        tiles.add(new Tile(false, 0, 565)); // nothing (void) (outside the map) tile
+        tiles.add(new Tile(true, 224, 832)); // grass tile
+        tiles.add(new Tile(true, 256, 832)); // grass 2 tile
+        tiles.add(new Tile(false, 256, 576)); // stone tile
+    }
 
-        /*String[] info = file.split("\\s+");
-        this.width = Utils.parseInt(info[0]);
-        this.height = Utils.parseInt(info[1]);
-        this.x = Utils.parseInt(info[2]);
-        this.y = Utils.parseInt(info[3]);*/
-        this.height = new int[file.length];
-        for (int i = 0; i < this.height.length; i++)
-            height[i] = file[i].length;
-        //this.tile[x][y] = new Image("assets/worlds/World/" + Utils.parseInt(info[(i + j * this.width) + 4]) + ".jpg");
+    public void loadWorld(String path, int spawnX, int spawnY) {
+        xOffset = spawnX;
+        yOffset = spawnY;
+        String[][] file = Utilities.loadFile(path);
 
-        this.tile = new Image[this.height.length][];
-        for (int y = 0; y < this.height.length; y++) {
-            this.tile[y] = new Image[file[y].length];
-            for (int x = 0; x < file[y].length; x++) {
-                this.tile[y][x] = new Image("assets/worlds/World/" + file[y][x] + ".jpg");
-            }
+        this.width = (short) file[0].length;
+        this.height = (short) file.length;
+
+        this.mapTiles = new Tile[this.width][this.height]; // Array of mapTiles with only height (Since each height has it's own width (dynamic map))
+        for (int x = 0; x < this.width; x++) {
+            for (int y = 0; y < this.height; y++)
+                this.mapTiles[x][y] = tiles.get(Integer.parseInt(file[y][x])); // Declares each mapTile to its corresponding fileTile information
         }
     }
 
-    public void update(){}
-
-    public void update(float velocityX, float velocityY) {
-        this.xOffset += velocityX;
-        this.yOffset += velocityY;
+    public Tile getTile(int x, int y) {
+        if (x < 0 || y < 0 || x >= this.width || y >= this.height)
+            return tiles.get(0);
+        return mapTiles[x][y];
     }
 
-    @Override
+    public void update(Character player) {
+        if (!player.checkCollision(player.velocityX, 0f))
+            moveX(player);
+        if (!player.checkCollision(0f, player.velocityY))
+            moveY(player);
+    }
+
+    public void moveX(Character player) {
+        if (player.velocityX != 0) { // Checks if player is moving in x-axis
+            int tempX = (int) (player.getBoundsX() + this.xOffset + player.velocityX); // Left side of player collision
+            if (player.velocityX > 0) // If player going right
+                tempX += player.getBoundsWidth(); // Right side of player collision
+            tempX /= MAXTILEWIDTH;
+
+            if (getTile(tempX, (int)(player.getBoundsY() + this.yOffset) / MAXTILEHEIGHT).isWalkable() // Upper side of player collision
+                    && getTile(tempX, (int)(player.getBoundsY() + this.yOffset + player.getBoundsHeight()) / MAXTILEHEIGHT).isWalkable()) // Lower side of player collision
+                this.xOffset += player.velocityX; // Move player left or right (velocityX) by moving game camera (world) instead of actual player (player always in center of screen)
+            entityManager.update(); // Updates entities in game
+        }
+    }
+
+    public void moveY(Character player) {
+        if (player.velocityY != 0) { // Checks if player is moving in y-axis
+            int tempY = (int) (player.getBoundsY() + this.yOffset) - 1;
+            if (player.velocityY > 0) // If player going down
+                tempY += player.getBoundsHeight() + 3;
+            tempY /= MAXTILEHEIGHT;
+
+            if (getTile((int)(player.getBoundsX() + this.xOffset) / MAXTILEWIDTH, tempY).isWalkable()
+                    && getTile((int)(player.getBoundsX() + this.xOffset + player.getBoundsWidth()) / MAXTILEWIDTH, tempY).isWalkable())
+                this.yOffset += player.velocityY;
+            entityManager.update(); // Updates entities in game
+        }
+    }
+
     public void render(GraphicsContext gc) {
-        int LeftBorderX = (int) Math.max(0, (this.xOffset / 64) + 1);
-        int RightBorderX[] = new int[this.height.length];
-        for (int i = 0; i < this.height.length; i++)
-            RightBorderX[i] = (int) Math.min(this.height[i], (Window.WIDTH + this.xOffset) / 64);
-        int TopBorderY = (int) Math.max(0, (this.yOffset / 64) + 1);
-        int BottomBorderY = (int) Math.min(this.height.length, (Window.HEIGHT + this.yOffset) / 64);
+        short LeftBorderX = (short) Math.max(0, this.xOffset / MAXTILEWIDTH);
+        short RightBorderX = (short) Math.min(this.width, ((Window.WIDTH + this.xOffset) / MAXTILEWIDTH) + 1);
+        short TopBorderY = (short) Math.max(0, this.yOffset / MAXTILEHEIGHT);
+        short BottomBorderY = (short) Math.min(this.height, ((Window.HEIGHT + this.yOffset) / MAXTILEHEIGHT) + 1);
 
-        for (int y = TopBorderY; y < BottomBorderY; y++) {
-            for (int x = LeftBorderX; x < RightBorderX[y]; x ++)
-                gc.drawImage(this.tile[y][x], (x * 64) - this.xOffset, (y * 64) - this.yOffset);
+        for (int x = LeftBorderX; x < RightBorderX; x ++) {
+            for (int y = TopBorderY; y < BottomBorderY; y++)
+                this.mapTiles[x][y].render(gc, (x * MAXTILEWIDTH) - this.xOffset, (y * MAXTILEHEIGHT) - this.yOffset);
         }
+    }
+
+    public void renderEntities(GraphicsContext gc) { entityManager.render(gc); }
+
+    public void initializeWorldObjects() {
+        Tree tree = Tree.tree1(handler, 60, 50);
+        entityManager.addEntity(tree);
+        Tree tree1 = Tree.tree1(handler, 300, 230);
+        entityManager.addEntity(tree1);
+        Tree tree2 = Tree.tree1(handler, 600, 230);
+        entityManager.addEntity(tree2);
+        Tree tree3 = Tree.tree1(handler, 480, 20);
+        entityManager.addEntity(tree3);
     }
 }
